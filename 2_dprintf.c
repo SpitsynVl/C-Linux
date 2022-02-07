@@ -6,8 +6,9 @@
 
 
 
-int main(int argc, char* argv[]){  
-    //проверка корректности данных в консоли
+int main(int argc, char* argv[]){
+    int status = 0;  
+    //проверка корректности параметров
     if(argc < 3) { 
         printf("I need file and string\n"); 
         return 1;
@@ -16,7 +17,8 @@ int main(int argc, char* argv[]){
         printf("I need only file and string, nothing more\n");
     }
         
-    int fd = open(argv[1], O_WRONLY | O_CREAT | O_TRUNC, 0622); 
+    //чтение для всех, запись для владельца
+    int fd = open(argv[1], O_WRONLY | O_CREAT | O_TRUNC, 0644); 
 
     //проверка корректности открытия файла
     if (fd < 0) { 
@@ -26,16 +28,16 @@ int main(int argc, char* argv[]){
 
     //запись данных в файл и проверка корректности записи
     if(dprintf(fd, "%s\n",  argv[2]) < 0) { 
-        perror("Can't write in file\n"); 
-        return 3;  
+        perror("Can't write in file\n");
+        status = 3;
     } 
 
     //проверка корректности закрытия файла
     if (close(fd) < 0) {
         perror("Can't close file\n"); 
-        return 4;  
+        status = 4;  
     }
 
 
-    return 0;
+    return status;
 }
