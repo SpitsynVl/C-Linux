@@ -7,11 +7,6 @@
 
 
 int main(int argc, char* argv[]){  
-
-    // три аргумента 0 - испольняемый файл  
-    // 1 - в какой файл записываем 
-    // 2 - что записываем 
-
     //проверка корректности данных в консоли
     if(argc < 3) { 
         printf("I need file and string\n"); 
@@ -20,10 +15,8 @@ int main(int argc, char* argv[]){
     if(argc > 3) {
         printf("I need only file and string, nothing more\n");
     }
-
-    int flags = O_WRONLY | O_CREAT;   
-     
-    int fd = open(argv[1], flags, 0622); 
+        
+    int fd = open(argv[1], O_WRONLY | O_CREAT | O_TRUNC, 0622); 
 
     //проверка корректности открытия файла
     if (fd < 0) { 
@@ -32,7 +25,7 @@ int main(int argc, char* argv[]){
     } 
 
     //запись данных в файл и проверка корректности записи
-    if(dprintf(fd, "%s\n",  argv[2]) < 0){ 
+    if(dprintf(fd, "%s\n",  argv[2]) < 0) { 
         perror("Can't write in file\n"); 
         return 3;  
     } 
