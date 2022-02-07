@@ -6,12 +6,14 @@
 #include <string.h>
 #include <stdbool.h> 
 #include <stdlib.h>
-#define BUFF_SIZE 1024*1024
+#define BUFF_SIZE (1024 * 1024)
 
 
 int make_copy(int fd_rd, int fd_wr) {
-    char buffer[BUFF_SIZE];
-    
+    char* buffer = malloc(BUFF_SIZE);
+    if(buffer == NULL) {
+        return 3;
+    }
 
     ssize_t bytes_read, bytes_write;
     while(true) {
@@ -19,22 +21,31 @@ int make_copy(int fd_rd, int fd_wr) {
 
         //ошибка
         if(bytes_read < 0) {
+            free(buffer);
             return 1;
         }
 
         //конец файла
         if(bytes_read == 0) {
+            free(buffer);
             return 0;
         }
-        
-        bytes_write = write(fd_wr, buffer, bytes_read);
-        if(bytes_write < 0) {
-            return 2;
+
+        ssize_t counter = 0;
+        while(counter < bytes_read) {
+            bytes_write = write(fd_wr, buffer + counter, bytes_read - counter);
+            if(bytes_write < 0) {
+                free(buffer);
+                return 2;
+            }
+            counter += bytes_write;
         }
+        
     }
 }
 
 int main(int argc, char* argv[]) {
+    int status = 0;
     //проверка корректности данных, введённых в терминале
     if(argc < 3) {
         perror("I need file to read and file to write\n");
@@ -51,7 +62,7 @@ int main(int argc, char* argv[]) {
     }
 
     //открытие и проверка корректности открытия файла для чтения
-    int fd_read = open(argv[1], O_RDONLY, 0644);
+    int fd_read = open(argv[1], O_RDONLY);
     if(fd_read < 0) {
         perror("Can't open file to read from it\n");
         return 3;
@@ -65,26 +76,31 @@ int main(int argc, char* argv[]) {
         return 4;
     }
 
-    int status = make_copy(fd_read, fd_write);
-    switch(status) {
+    switch(make_copy(fd_read, fd_write)) {
         case 1:
             perror("Can't read from first file\n");
+            status = 5;
             break;
         case 2:
             perror("Can't write to second file\n");
+            status = 6;
+            break;
+        case 3:
+            perror("Can't allocate memory for buffer");
+            status = 9;
             break;
         break;
     }
 
     if(close(fd_read) < 0) {
         perror("Can't close first file\n");
-        return 5;
+        status = 7;
     }
 
     if(close(fd_write) < 0) {
         perror("Can't close second file\n");
-        return 6;
+        status = 8;
     }
 
-    return 0;
+    return status;
 }
