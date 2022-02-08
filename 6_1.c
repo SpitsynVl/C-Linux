@@ -41,8 +41,7 @@ int main(void) {
     }
     */
 
-    DIR* cur_dir;
-    cur_dir = opendir(".");
+    DIR* cur_dir = opendir(".");
     if(cur_dir == NULL) {
         perror("Can't open directory\n");
         return 1;
