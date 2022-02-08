@@ -49,12 +49,7 @@ int main(void) {
 
     struct dirent* entry;
     errno = 0;
-    while(1) {
-        entry = readdir(cur_dir); 
-        if(entry == NULL) {
-            break;
-        }
-
+    while((entry = readdir(cur_dir)) != NULL) {
         char file_type = dtype_char(entry->d_type);
 
         //в случае, когда readdir не смог распознать тип файла, пользуемся lstat
