@@ -37,7 +37,7 @@ int main(void) {
     /* убрал эту проверку, так как компилятор ругается, что не используем argv[]
     if(argc > 1) {
         perror("Too many argumets, I need only one\n");
-        status = 1;
+        return 1;
     }
     */
 
@@ -45,7 +45,7 @@ int main(void) {
     cur_dir = opendir(".");
     if(cur_dir == NULL) {
         perror("Can't open directory\n");
-        status = 1;
+        return 1;
     }
 
     struct dirent* entry;
