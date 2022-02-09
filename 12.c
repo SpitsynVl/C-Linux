@@ -38,7 +38,7 @@ int main(void) {
     printf("EUID %d(%s), EGID %d(%s)\n", euid, epw_name, egid, egr_name);
 
     //Supplementary groups
-    int groups_list[NGROUPS_MAX + 1];
+    gid_t groups_list[NGROUPS_MAX + 1];
     int groups_num = getgroups(NGROUPS_MAX, groups_list);
     if(groups_num < 0) {
         perror("Error in getgroups\n");
