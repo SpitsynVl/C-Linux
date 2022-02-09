@@ -20,30 +20,30 @@ int main(void) {
     //Real user and group ID
     uid_t ruid = getuid();
     gid_t rgid = getgid();
-    char* unknown = malloc(sizeof("?"));
-    strcpy(unknown, "?");
+    const char* unknown = "?";
     struct passwd* rpwuid = getpwuid(ruid);
-    char* rpw_name = rpwuid ? rpwuid->pw_name : unknown;
+    const char* rpw_name = rpwuid ? rpwuid->pw_name : unknown;
     struct group* rgrid = getgrgid(rgid);
-    char* rgr_name = rgrid ? rgrid->gr_name : unknown;
+    const char* rgr_name = rgrid ? rgrid->gr_name : unknown;
     printf("UID %d(%s), GID %d(%s)\n", ruid, rpw_name, rgid, rgr_name);
 
     //Effective user and group ID
     uid_t euid = geteuid();
     gid_t egid = getegid();
     struct passwd * epwuid = getpwuid(euid);
-    char * epw_name = epwuid ? epwuid->pw_name : unknown;
+    const char* epw_name = epwuid ? epwuid->pw_name : unknown;
     struct group * egrid = getgrgid(egid);
-    char * egr_name = egrid ? egrid->gr_name : unknown;
+    const char* egr_name = egrid ? egrid->gr_name : unknown;
     printf("EUID %d(%s), EGID %d(%s)\n", euid, epw_name, egid, egr_name);
 
     //Supplementary groups
-    gid_t groups_list[NGROUPS_MAX + 1];
-    int groups_num = getgroups(NGROUPS_MAX, groups_list);
+    int groups_num = getgroups(0, NULL);
     if(groups_num < 0) {
         perror("Error in getgroups\n");
         return 1;
     }
+    gid_t groups_list[groups_num];
+    groups_num = getgroups(groups_num, groups_list);
     printf("Supplemetary groups(%d): ", groups_num);
     for(int i = 0; i < groups_num; ++i) {
         printf("%d", groups_list[i]);
@@ -56,8 +56,6 @@ int main(void) {
         }
     }
     printf("\n");
-
-    free(unknown);
 
     return 0;
 }
