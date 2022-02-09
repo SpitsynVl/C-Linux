@@ -1,3 +1,5 @@
+//gcc -Werror -Wall -Wextra -Wnarrowing -Wconversion -Wwrite-strings -Wcast-qual -Wundef -Wstrict-prototypes -Wbad-function-cast -Wlogical-op -Wreturn-type -g -O2 -fwhole-program
+
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -34,22 +36,19 @@ char mode_char(mode_t st_mode) {
 int main(void) {
     int status = 0;
 
-    /* убрал эту проверку, так как компилятор ругается, что не используем argv[]
-    if(argc > 1) {
-        perror("Too many argumets, I need only one\n");
-        return 1;
-    }
-    */
-
     DIR* cur_dir = opendir(".");
     if(cur_dir == NULL) {
         perror("Can't open directory\n");
         return 1;
     }
 
-    struct dirent* entry;
-    errno = 0;
-    while((entry = readdir(cur_dir)) != NULL) {
+    
+    while(1) {
+        errno = 0;
+        struct dirent* entry = readdir(cur_dir);
+        if(entry == NULL) {
+            break;
+        }
         char file_type = dtype_char(entry->d_type);
 
         //в случае, когда readdir не смог распознать тип файла, пользуемся lstat

@@ -50,12 +50,16 @@ int main(int argc, char* argv[]) {
     int fd = dirfd(dir_fd);
     if(fd < 0) {
         perror("Error in dirfd\n");
+        closedir(dir_fd);
         return 3;
     }
 
-    struct dirent* entry;
-    errno = 0;
-    while((entry = readdir(dir_fd)) != NULL) {
+    while(1) {
+        errno = 0;
+        struct dirent* entry = readdir(dir_fd);
+        if(entry == NULL) {
+            break;
+        }
         char file_type = dtype_char(entry->d_type);
         if(file_type == '?') {
             struct stat sb;
