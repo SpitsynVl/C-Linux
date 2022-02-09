@@ -5,10 +5,10 @@
 #include <sys/statvfs.h>
 
 void print_file_syst_info(struct statvfs* sb) {
-    printf("Total: %ju\n", (uintmax_t)sb->f_blocks * sb->f_bsize);
-    printf("Available: %ju\n", (uintmax_t)sb->f_bfree * sb->f_bsize);
-    printf("Available for unpriveleged users: %ju\n", (uintmax_t)sb->f_bavail * sb->f_bsize);
-    printf("Used: %ju\n", (uintmax_t)sb->f_bsize * (sb->f_blocks  - sb->f_bavail));
+    printf("Total: %ju\n", (uintmax_t)sb->f_blocks * sb->f_frsize);
+    printf("Available: %ju\n", (uintmax_t)sb->f_bfree * sb->f_frsize);
+    printf("Available for unpriveleged users: %ju\n", (uintmax_t)sb->f_bavail * sb->f_frsize);
+    printf("Used: %ju\n", (uintmax_t)(sb->f_blocks  - sb->f_bfree) * sb->f_frsize);
 }
 
 
