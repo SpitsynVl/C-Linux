@@ -14,13 +14,13 @@ void print_file_syst_info(struct statvfs* sb) {
 
 int main(int argc, char* argv[]) {
     if(argc < 2) { 
-        perror("I need paths\n");
+        printf("Usage: %s path...\n", argv[0]);
         return 1;
     }
     struct statvfs sb;
     for(int i = 1; i < argc; i++) {
         if(statvfs(argv[i], &sb) == -1) {
-            perror("Error in statvfs\n");
+            perror("Error in statvfs");
             continue;
         }
         print_file_syst_info(&sb);
